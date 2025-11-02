@@ -448,7 +448,7 @@ else if (builtin.abi == .android and (builtin.cpu.arch.isARM() or builtin.cpu.ar
     // as it does by default when compiling for the armeabi-v7a NDK ABI.
     .AAPCSVFP
 else
-    .C;
+    .c;
 
 pub const VkAllocationCallbacks = extern struct {
     p_user_data: ?*anyopaque = null,
@@ -533,6 +533,13 @@ pub const Gammaramp = extern struct { red: ?[*]u16, green: ?[*]u16, blue: ?[*]u1
 pub const Image = extern struct { width: i32, height: i32, pixels: ?[*]u8 };
 
 pub const GamepadState = extern struct { buttons: [15]u8, axes: [6]f32 };
+
+pub const NSWindow = *anyopaque;
+pub const X11Display = *anyopaque;
+pub const X11Window = c_ulong;
+pub const WLDisplay = *anyopaque;
+pub const WLSurface = *anyopaque;
+pub const HWND = *anyopaque;
 
 extern fn glfwInit() c_int;
 
@@ -1319,6 +1326,48 @@ pub fn vulkanSupported() bool {
 extern fn glfwGetRequiredInstanceExtensions(count: *u32) ?[*][*:0]const u8;
 pub fn getRequiredInstanceExtensions(count: *u32) ?[*][*:0]const u8 {
     const res = glfwGetRequiredInstanceExtensions(count);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetCocoaWindow(window: *Window) ?NSWindow;
+pub fn getCocoaWindow(window: *Window) ?NSWindow {
+    const res = glfwGetCocoaWindow(window);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetX11Display() ?X11Display;
+pub fn getX11Display() ?X11Display {
+    const res = glfwGetX11Display();
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetX11Window(window: *Window) ?X11Window;
+pub fn getX11Window(window: *Window) ?X11Window {
+    const res = glfwGetX11Window(window);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetWaylandDisplay() ?WLDisplay;
+pub fn getWaylandDisplay() ?WLDisplay {
+    const res = glfwGetWaylandDisplay();
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetWaylandWindow(window: *Window) ?WLSurface;
+pub fn getWaylandWindow(window: *Window) ?WLSurface {
+    const res = glfwGetWaylandWindow(window);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetWin32Window(window: *Window) ?HWND;
+pub fn getWin32Window(window: *Window) ?HWND {
+    const res = glfwGetWin32Window(window);
     errorCheck2();
     return res;
 }
