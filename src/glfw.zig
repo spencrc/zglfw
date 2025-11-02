@@ -536,7 +536,7 @@ pub const GamepadState = extern struct { buttons: [15]u8, axes: [6]f32 };
 
 pub const NSWindow = *anyopaque;
 pub const X11Display = *anyopaque;
-pub const X11Window = c_ulong;
+pub const X11Window = u64;
 pub const WLDisplay = *anyopaque;
 pub const WLSurface = *anyopaque;
 pub const HWND = *anyopaque;
