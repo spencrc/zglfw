@@ -1454,8 +1454,8 @@ pub fn getX11Display() ?X11Display {
     return res;
 }
 
-extern fn glfwGetX11Window(window: *Window) ?X11Window;
-pub fn getX11Window(window: *Window) ?X11Window {
+extern fn glfwGetX11Window(window: *Window) X11Window;
+pub fn getX11Window(window: *Window) X11Window {
     const res = glfwGetX11Window(window);
     errorCheck2();
     return res;
