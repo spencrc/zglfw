@@ -814,7 +814,7 @@ pub fn windowHint(comptime hint: WindowHint, value: WindowHint.ValueType(hint)) 
     switch (ValueType) {
         [:0]const u8 => windowHintString(hint, value),
         else => {
-            glfwWindowHint(hint, cIntCast(value));
+            glfwWindowHint(@intFromEnum(hint), cIntCast(value));
             errorCheck2();
         },
     }
