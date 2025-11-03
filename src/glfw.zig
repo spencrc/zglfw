@@ -672,7 +672,6 @@ fn errorCheck() !void {
         .FormatUnavailable => GLFWError.FormatUnavailable,
         .NoWindowContext => GLFWError.NoWindowContext,
         .NoError => GLFWError.NoError,
-        else => GLFWError.NoError,
     };
     return err;
 }
