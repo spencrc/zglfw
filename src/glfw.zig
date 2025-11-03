@@ -264,7 +264,19 @@ pub const GamepadAxisLeftTrigger: GamepadAxis = 4;
 pub const GamepadAxisRightTrigger: GamepadAxis = 5;
 pub const GamepadAxisLast: GamepadAxis = 5;
 
-pub const GLFWError = error{ NotInitialized, NoCurrentContext, InvalidEnum, InvalidValue, OutOfMemory, APIUnavailable, VersionUnavailable, PlatformError, FormatUnavailable, NoWindowContext, NoError };
+pub const GLFWError = error{
+    NotInitialized,
+    NoCurrentContext,
+    InvalidEnum,
+    InvalidValue,
+    OutOfMemory,
+    APIUnavailable,
+    VersionUnavailable,
+    PlatformError,
+    FormatUnavailable,
+    NoWindowContext,
+    NoError,
+};
 
 pub const ErrorCode = c_int;
 pub const NotInitialized: ErrorCode = 0x00010001;
@@ -1368,6 +1380,20 @@ pub fn getWaylandWindow(window: *Window) ?WLSurface {
 extern fn glfwGetWin32Window(window: *Window) ?HWND;
 pub fn getWin32Window(window: *Window) ?HWND {
     const res = glfwGetWin32Window(window);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwPlatformSupported(platform: PlatformHint) c_int;
+pub fn platformSupported(platform: PlatformHint) c_int {
+    const res = glfwPlatformSupported(platform);
+    errorCheck2();
+    return res;
+}
+
+extern fn glfwGetPlatform() c_int;
+pub fn getPlatform() c_int {
+    const res = glfwGetPlatform();
     errorCheck2();
     return res;
 }
