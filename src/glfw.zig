@@ -45,6 +45,21 @@
 //
 //3. This Notice May Not Be Removed Or Altered From Any Source
 //   Distribution.
+//------------------------------------------------------------------------
+// HELPER
+//------------------------------------------------------------------------
+fn cIntCast(value: anytype) c_int { // taken from zig-gamedev's zglfw bindings
+    const ValueType = @TypeOf(value);
+    return switch (@typeInfo(ValueType)) {
+        .int => @intCast(value),
+        .@"enum", .enum_literal => @intFromEnum(value),
+        .bool => @intFromBool(value),
+        else => @compileError("Cannot cast " ++ @typeName(ValueType) ++ "to int."),
+    };
+}
+//------------------------------------------------------------------------
+// BINDINGS
+//------------------------------------------------------------------------
 const builtin = @import("builtin");
 
 pub const VersionMajor = 3;
@@ -300,54 +315,114 @@ pub const ErrorCode = enum(c_int) {
 };
 
 pub const WindowHint = enum(c_int) {
-    focused = 0x00020001,
-    iconified = 0x00020002,
-    resizable = 0x00020003,
-    visible = 0x00020004,
-    decorated = 0x00020005,
-    auto_iconify = 0x00020006,
-    floating = 0x00020007,
-    maximized = 0x00020008,
-    center_cursor = 0x00020009,
-    transparent_framebuffer = 0x0002000a,
-    hovered = 0x0002000b,
-    focus_on_show = 0x0002000c,
-    red_bits = 0x00021001,
-    green_bits = 0x00021002,
-    blue_bits = 0x00021003,
-    alpha_bits = 0x00021004,
-    depth_bits = 0x00021005,
-    stencil_bits = 0x00021006,
-    accum_red_bits = 0x00021007,
-    accum_green_bits = 0x00021008,
-    accum_blue_bits = 0x00021009,
-    accum_alpha_bits = 0x0002100a,
-    aux_buffers = 0x0002100b,
-    stereo = 0x0002100c,
-    samples = 0x0002100d,
-    srgb_capable = 0x0002100e,
-    refresh_rate = 0x0002100f,
-    doublebuffer = 0x00021010,
-    client_api = 0x00022001,
-    context_version_major = 0x00022002,
-    context_version_minor = 0x00022003,
-    context_revision = 0x00022004,
-    context_robustness = 0x00022005,
-    opengl_forward_compat = 0x00022006,
-    opengl_debug_context = 0x00022007,
-    opengl_profile = 0x00022008,
-    context_release_behavior = 0x00022009,
-    context_no_error = 0x0002200a,
-    context_creation_api = 0x0002200b,
-    scale_to_monitor = 0x0002200c,
-    cocoa_retina_framebuffer = 0x00023001,
-    cocoa_frame_name = 0x00023002,
-    cocoa_graphics_switching = 0x00023003,
+    focused = 0x00020001, //
+    iconified = 0x00020002, //
+    resizable = 0x00020003, //
+    visible = 0x00020004, //
+    decorated = 0x00020005, //
+    auto_iconify = 0x00020006, //
+    floating = 0x00020007, //
+    maximized = 0x00020008, //
+    center_cursor = 0x00020009, //
+    transparent_framebuffer = 0x0002000a, //
+    hovered = 0x0002000b, //
+    focus_on_show = 0x0002000c, //
+    red_bits = 0x00021001, //
+    green_bits = 0x00021002, //
+    blue_bits = 0x00021003, //
+    alpha_bits = 0x00021004, //
+    depth_bits = 0x00021005, //
+    stencil_bits = 0x00021006, //
+    accum_red_bits = 0x00021007, //
+    accum_green_bits = 0x00021008, //
+    accum_blue_bits = 0x00021009, //
+    accum_alpha_bits = 0x0002100a, //
+    aux_buffers = 0x0002100b, //
+    stereo = 0x0002100c, //
+    samples = 0x0002100d, //
+    srgb_capable = 0x0002100e, //
+    refresh_rate = 0x0002100f, //
+    doublebuffer = 0x00021010, //
+    client_api = 0x00022001, //
+    context_version_major = 0x00022002, //
+    context_version_minor = 0x00022003, //
+    context_revision = 0x00022004, //
+    context_robustness = 0x00022005, //
+    opengl_forward_compat = 0x00022006, //
+    opengl_debug_context = 0x00022007, //
+    opengl_profile = 0x00022008, //
+    context_release_behavior = 0x00022009, //
+    context_no_error = 0x0002200a, //
+    context_creation_api = 0x0002200b, //
+    scale_to_monitor = 0x0002200c, //
+    cocoa_retina_framebuffer = 0x00023001, //
+    cocoa_frame_name = 0x00023002, //
+    cocoa_graphics_switching = 0x00023003, //
     x11_class_name = 0x00024001,
     x11_instance_name = 0x00024002,
+
+    pub fn ValueType(comptime hint: WindowHint) type {
+        return switch (hint) {
+            .resizable,
+            .visible,
+            .decorated,
+            .focused,
+            .auto_iconify,
+            .floating,
+            .maximized,
+            .center_cursor,
+            .transparent_framebuffer,
+            .focus_on_show,
+            .scale_to_monitor,
+
+            .iconified,
+            .hovered,
+            .stereo,
+            .srgb_capable,
+            .doublebuffer,
+            .opengl_forward_compat,
+            .opengl_debug_context,
+            .cocoa_retina_framebuffer,
+            .cocoa_graphics_switching,
+            .context_no_error,
+            => bool,
+
+            .red_bits,
+            .green_bits,
+            .blue_bits,
+            .alpha_bits,
+            .depth_bits,
+            .stencil_bits,
+
+            .accum_red_bits,
+            .accum_green_bits,
+            .accum_blue_bits,
+            .accum_alpha_bits,
+
+            .aux_buffers,
+            .samples,
+
+            .context_version_major,
+            .context_version_minor,
+            .context_revision,
+            => c_int,
+
+            .refresh_rate => c_int,
+            .client_api => ClientAPIAttribute,
+            .context_creation_api => ContextAPIAttribute,
+            .context_robustness => RobustnessAttribute,
+            .opengl_profile => GLProfileAttribute,
+            .context_release_behavior => ReleaseBehaviorAttribute,
+
+            .cocoa_frame_name,
+            .x11_class_name,
+            .x11_instance_name,
+            => [:0]const u8,
+        };
+    }
 };
 
-pub const APIAttribute = enum(c_int) {
+pub const ClientAPIAttribute = enum(c_int) {
     no_api = 0,
     open_gl_api = 0x00030001,
     open_gles_api = 0x00030002,
@@ -734,9 +809,15 @@ pub fn defaultWindowHints() void {
 }
 
 extern fn glfwWindowHint(hint: c_int, value: c_int) void;
-pub fn windowHint(hint: WindowHint, value: c_int) void {
-    glfwWindowHint(@intFromEnum(hint), value);
-    errorCheck2();
+pub fn windowHint(comptime hint: WindowHint, value: WindowHint.ValueType(hint)) void {
+    const ValueType = @TypeOf(value);
+    switch (ValueType) {
+        [:0]const u8 => windowHintString(hint, value),
+        else => {
+            glfwWindowHint(hint, cIntCast(value));
+            errorCheck2();
+        },
+    }
 }
 
 extern fn glfwWindowHintString(hint: c_int, value: [*:0]const u8) void;
@@ -1015,7 +1096,6 @@ pub fn postEmptyEvent() void {
 }
 
 extern fn glfwGetInputMode(window: ?*Window, mode: c_int) c_int;
-
 //Depending on what your input mode is, you can change to true/false or one of the attribute enums
 pub fn getInputMode(window: ?*Window, mode: InputMode) c_int {
     const res = glfwGetInputMode(window, @intFromEnum(mode));
